@@ -1,0 +1,29 @@
+Jacob Knispel
+3/21/2017
+---
+
+I was able to solve sudoku16ReallyHard.txt -- the solution my code generated is contained in "sudoku16ReallyHardSolution.txt".
+The time required to solve this was 2048.105s, or 34m8s.
+
+In order to speed up my solver for large puzzles like this one, I did a lot of preprocessing.
+Initially, I create "CellCluster" objects for each conjoined portion of the puzzle.
+In other words, there will be an object for each row, column, and NxN "chunk" of spaces.
+Each CellCluster contains a set of unused values within that cluster.
+
+When I do my backtracking, I simply locate the three CellClusters associated with cells of value 0, then do a set union.*
+The union of the three sets tells me all of the possible values for the current cell, without having to look up many values.
+
+While this effort seems to have helped to speed up the 16x16 puzzle, it unfortunately makes the code a little complicated, as well
+as slowing the algorithm down for smaller puzzles like the normal 9x9 because of all the overhead required.
+
+Furthermore, applying any heuristics to this code (e.g. choosing cells in a certain order) becomes much harder when these sets
+need to be updated, and what little I tried slowed down the program more than it was worth due to slow set->array conversions.**
+
+On a final note, this could be sped up much more if the whole program was written in one class, and the 2D array was brought down
+a dimension to a 1D one. This is because Java does not implicitly support 2D arrays, and so it actually takes multiple data accesses
+to use one.
+
+---
+
+*For this reason, this would likely be faster in a scripting language that deals well with sets like Python
+**I think. It's possible I did something wrong while sorting, or overused objects to the point where it was slowing me down.
