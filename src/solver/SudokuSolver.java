@@ -9,7 +9,6 @@ import java.io.PrintWriter;
  * 
  * @author Jacob Knispel (https://github.com/knispeja)
  */
-
 public class SudokuSolver {
 	
 	private static final String SOLUTION_FILE_SUFFIX = "Solution";
@@ -26,7 +25,7 @@ public class SudokuSolver {
 		long tStart = System.currentTimeMillis();
 		
 		// Create board from file and display input
-		Board board = new Board(new File(args[0]));
+		SudokuPuzzle board = new SudokuPuzzle(new File(args[0]));
 		System.out.println("Input:");
 		System.out.println(board);
 		

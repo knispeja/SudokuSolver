@@ -3,21 +3,22 @@ Jacob Knispel
 ---
 
 I was able to solve sudoku16ReallyHard.txt -- the solution my code generated is contained in "sudoku16ReallyHardSolution.txt".
-The time required to solve this was 2048.105s, or 34m8s.
+However, my code doesn't seem to solve Sudoku25.txt in a reasonable amount of time (<15min or so).
+The time required to solve it is typically around 950ms, almost a second.
 
 In order to speed up my solver for large puzzles like this one, I did a lot of preprocessing.
 Initially, I create "CellCluster" objects for each conjoined portion of the puzzle.
 In other words, there will be an object for each row, column, and NxN "chunk" of spaces.
 Each CellCluster contains a set of unused values within that cluster.
 
-When I do my backtracking, I simply locate the three CellClusters associated with cells of value 0, then do a set union.*
-The union of the three sets tells me all of the possible values for the current cell, without having to look up many values.
+I then create "Cell" objects which are put into a PriorityQueue to give the order in which to choose values for cells.
+The PriorityQueue is ordered by which cells have the fewest possible values to the most possible.
+This change had a much larger runtime impact than the "CellCluster" change -- it brought me from about 30m to 1s on the 16x16.
 
-While this effort seems to have helped to speed up the 16x16 puzzle, it unfortunately makes the code a little complicated, as well
-as slowing the algorithm down for smaller puzzles like the normal 9x9 because of all the overhead required.
+When I do my backtracking, I simply locate the three CellClusters associated with cells of value 0, then do a set intersection.*
+The intersection of the three sets tells me all of the possible values for the current cell, without having to look up many values.
 
-Furthermore, applying any heuristics to this code (e.g. choosing cells in a certain order) becomes much harder when these sets
-need to be updated, and what little I tried slowed down the program more than it was worth due to slow set->array conversions.**
+These efforts sped up my code greatly, with no apparent downsides other than a slightly increased memory usage.
 
 On a final note, this could be sped up much more if the whole program was written in one class, and the 2D array was brought down
 a dimension to a 1D one. This is because Java does not implicitly support 2D arrays, and so it actually takes multiple data accesses
@@ -25,5 +26,6 @@ to use one.
 
 ---
 
-*For this reason, this would likely be faster in a scripting language that deals well with sets like Python
-**I think. It's possible I did something wrong while sorting, or overused objects to the point where it was slowing me down.
+*For this reason, this would likely be faster in a scripting language that deals well with sets like Python. I deliberately
+	clone the smallest set available (in CellCluster.intersectWith()) to start the set intersection, which provided a small 
+	performance increase.
