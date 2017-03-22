@@ -170,13 +170,13 @@ public class SudokuPuzzle {
 	
 	@Override
 	public String toString() {
-		String output = this.boardSize + "\n";
+		String output = this.boardSize + "\r\n";
 		for(int i=0; i<this.boardSize; i++) {
 			for(int j=0; j<this.boardSize; j++) {
 				output+=this.board[i][j] + " ";
 			}
 			output = output.trim();
-			output += "\n";
+			output += "\r\n";
 		}
 		return output.trim();
 	}
