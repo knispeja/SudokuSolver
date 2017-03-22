@@ -60,7 +60,7 @@ public class SudokuSolver {
 		}
 		try {
 			PrintWriter out = new PrintWriter(newFileName);
-			out.print(puzzle);
+			out.print(result);
 			out.close();
 		} catch (FileNotFoundException e) {
 			System.err.println(e);
