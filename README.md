@@ -1,5 +1,7 @@
-Jacob Knispel
-3/21/2017
+Sudoku Solver Overview
+
+Jacob Knispel - 3/21/2017
+
 ---
 
 I was able to solve sudoku16ReallyHard.txt -- the solution my code generated is contained in "sudoku16ReallyHardSolution.txt".
