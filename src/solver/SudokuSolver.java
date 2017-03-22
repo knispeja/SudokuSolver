@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
+/**
+ * A simple Sudoku solver.
+ * 
+ * @author Jacob Knispel (https://github.com/knispeja)
+ */
+
 public class SudokuSolver {
 	
-	private static final double MS_PER_SECOND = 1000.0;
 	private static final String SOLUTION_FILE_SUFFIX = "Solution";
 	
 	public static void main(String[] args){
@@ -30,8 +35,7 @@ public class SudokuSolver {
 		
 		// Record time elapsed
 		long tEnd = System.currentTimeMillis();
-		long tDelta = tEnd - tStart;	
-		double elapsedSeconds = tDelta / MS_PER_SECOND;
+		long elapsedMs = tEnd - tStart;	
 		
 		// Display results
 		System.out.println();
@@ -43,7 +47,7 @@ public class SudokuSolver {
 			result = "[Impossible Puzzle]";
 		}
 		System.out.println(result);
-		System.out.println("Time elapsed: " + elapsedSeconds + "s");
+		System.out.println("Time elapsed: " + elapsedMs + "ms");
 		
 		// Write result to a file
 		int dotIndex = args[0].lastIndexOf('.');

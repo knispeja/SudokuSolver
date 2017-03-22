@@ -6,11 +6,13 @@ import java.util.Set;
 public class CellCluster {
 	
 	private Set<Integer> remainingValues;
+	private boolean hasUpdated;
 	
 	public CellCluster(int boardSize) {
 		this.remainingValues = new HashSet<Integer>();
 		for(int i=1; i<=boardSize; i++)
 			this.remainingValues.add(i);
+		this.hasUpdated = false;
 	}
 	
 	public void putValue(int value) {
@@ -44,5 +46,13 @@ public class CellCluster {
 	
 	public boolean isComplete() {
 		return this.remainingValues.size() == 0;
+	}
+	
+	public void setHasUpdated() {
+		this.hasUpdated = true;
+	}
+	
+	public boolean hasUpdated() {
+		return this.hasUpdated;
 	}
 }

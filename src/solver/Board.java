@@ -2,12 +2,19 @@ package solver;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 
 public class Board {
-
+	
 	private int[][] boardVals;
+	private PriorityQueue<Cell> cells;
+	
 	private CellCluster[] rows;
 	private CellCluster[] cols;
 	private CellCluster[][] chunks;
@@ -24,6 +31,16 @@ public class Board {
 	    } 
 	    catch (Exception e) {
 	    	System.out.println("Malformed input file: " + e);
+		}
+	}
+	
+	private class CellComparator implements Comparator<Cell> {
+		@Override
+		public int compare(Cell arg0, Cell arg1) {
+			return Integer.compare(
+					arg0.getInitialPossibleValueCount(), 
+					arg1.getInitialPossibleValueCount()
+				);
 		}
 	}
 	
@@ -64,6 +81,21 @@ public class Board {
     	
     	// Sanity check
     	if(count != this.boardSize*this.boardSize) throw new RuntimeException("Incorrect number of inputs.");
+    	
+    	// Preprocessing to fill priority queue of cells
+    	this.cells = new PriorityQueue<Cell>(this.boardSize*this.boardSize, new CellComparator());
+		for(int row=0; row<this.boardSize; row++) {
+			CellCluster rowCluster = this.rows[row];
+			for(int col=0; col<this.boardSize; col++) {
+				if(this.boardVals[row][col] != 0)
+					continue;
+				CellCluster colCluster = this.cols[col];
+				CellCluster chunkCluster = getChunkClusterFor(row, col);
+				Cell newCell = new Cell(row, col);
+				newCell.setPossibleValues(rowCluster.intersectWith(colCluster, chunkCluster));
+				this.cells.add(newCell);
+			}
+		}
 	}
 	
 	public void addValueToClusters(int value, int row, int col) {
@@ -85,29 +117,36 @@ public class Board {
 	}
 	
 	public boolean solve() {
-		for(int row=0; row<this.boardSize; row++) {
-			CellCluster rowCluster = this.rows[row];
-			if(rowCluster.isComplete())
-				continue;
-			for(int col=0; col<this.boardSize; col++) {
-				
-				if(this.boardVals[row][col] != 0)
-					continue;
-				
-				CellCluster colCluster = this.cols[col];
-				CellCluster chunkCluster = getChunkClusterFor(row, col);
-				Set<Integer> possibleValues = rowCluster.intersectWith(colCluster, chunkCluster);
-				if(possibleValues.isEmpty())
-					return false;
-				for(int value: possibleValues) {
-					this.boardVals[row][col] = value;
-					addValueToClusters(value, row, col);
-					if(solve()) return true;
-					this.boardVals[row][col] = 0;
-					removeValueFromClusters(value, row, col);
-				}
+		Cell cell;
+		if((cell = this.cells.poll()) != null) {
+			CellCluster rowCluster = this.rows[cell.getRow()];
+			CellCluster colCluster = this.cols[cell.getCol()];
+			CellCluster chunkCluster = getChunkClusterFor(cell.getRow(), cell.getCol());
+			
+			Set<Integer> possibleValues;
+			if(rowCluster.hasUpdated() || colCluster.hasUpdated() || chunkCluster.hasUpdated()) {
+				possibleValues = rowCluster.intersectWith(colCluster, chunkCluster);
+				cell.setPossibleValues(possibleValues);
+			} else {
+				possibleValues = cell.getInitialPossibleValues();
+			}
+			rowCluster.setHasUpdated();
+			colCluster.setHasUpdated();
+			chunkCluster.setHasUpdated();
+			if(possibleValues.isEmpty()) {
+				this.cells.add(cell);
 				return false;
 			}
+			
+			for(int value: possibleValues) {
+				this.boardVals[cell.getRow()][cell.getCol()] = value;
+				addValueToClusters(value, cell.getRow(), cell.getCol());
+				if(solve()) return true;
+				this.boardVals[cell.getRow()][cell.getCol()] = 0;
+				removeValueFromClusters(value, cell.getRow(), cell.getCol());
+			}
+			this.cells.add(cell);
+			return false;
 		}
 		return true;
 	}
