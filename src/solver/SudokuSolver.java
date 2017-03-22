@@ -21,16 +21,16 @@ public class SudokuSolver {
 			return;
 		}
 
+		// Create board from file and display input
+		SudokuPuzzle puzzle = new SudokuPuzzle(new File(args[0]));
+		System.out.println("Input:");
+		System.out.println(puzzle);
+		
 		// Measure time elapsed
 		long tStart = System.currentTimeMillis();
 		
-		// Create board from file and display input
-		SudokuPuzzle board = new SudokuPuzzle(new File(args[0]));
-		System.out.println("Input:");
-		System.out.println(board);
-		
 		// Solve the board
-		boolean solved = board.solve();
+		boolean solved = puzzle.solve();
 		
 		// Record time elapsed
 		long tEnd = System.currentTimeMillis();
@@ -41,7 +41,7 @@ public class SudokuSolver {
 		String result;
 		if(solved) {
 			System.out.println("Output:");
-			result = board.toString();
+			result = puzzle.toString();
 		} else {
 			result = "[Impossible Puzzle]";
 		}
@@ -60,7 +60,7 @@ public class SudokuSolver {
 		}
 		try {
 			PrintWriter out = new PrintWriter(newFileName);
-			out.print(board);
+			out.print(puzzle);
 			out.close();
 		} catch (FileNotFoundException e) {
 			System.err.println(e);

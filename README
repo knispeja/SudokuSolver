@@ -3,12 +3,12 @@ Jacob Knispel
 ---
 
 I was able to solve sudoku16ReallyHard.txt -- the solution my code generated is contained in "sudoku16ReallyHardSolution.txt".
+The time required to solve sudoku16ReallyHard.txt is typically around 950ms, almost a second.
 However, my code doesn't seem to solve Sudoku25.txt in a reasonable amount of time (<15min or so).
-The time required to solve it is typically around 950ms, almost a second.
 
 In order to speed up my solver for large puzzles like this one, I did a lot of preprocessing.
 Initially, I create "CellCluster" objects for each conjoined portion of the puzzle.
-In other words, there will be an object for each row, column, and NxN "chunk" of spaces.
+In other words, there will be an object for each row, column, and NxN "chunk" of spaces, where N is the partition dimension.
 Each CellCluster contains a set of unused values within that cluster.
 
 I then create "Cell" objects which are put into a PriorityQueue to give the order in which to choose values for cells.

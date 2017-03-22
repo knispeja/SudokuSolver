@@ -142,7 +142,7 @@ public class SudokuPuzzle {
 			Set<Integer> possibleValues;
 			if(rowCluster.hasUpdated() || colCluster.hasUpdated() || chunkCluster.hasUpdated()) {
 				possibleValues = rowCluster.intersectWith(colCluster, chunkCluster);
-				cell.setPossibleValues(possibleValues);
+				cell.setPossibleValues(possibleValues); // updated possible value set with new set
 			} else {
 				possibleValues = cell.getInitialPossibleValues();
 			}
